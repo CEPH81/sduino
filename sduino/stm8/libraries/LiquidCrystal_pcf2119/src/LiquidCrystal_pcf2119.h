@@ -120,12 +120,13 @@
 
 	void LiquidCrystal_pcf2119_scrollDisplayLeft();
 	void LiquidCrystal_pcf2119_scrollDisplayRight();
-	void LiquidCrystal_pcf2119_printLeft();
-	void LiquidCrystal_pcf2119_printRight();
 	void LiquidCrystal_pcf2119_leftToRight();
 	void LiquidCrystal_pcf2119_rightToLeft();
-	void LiquidCrystal_pcf2119_shiftIncrement();
-	void LiquidCrystal_pcf2119_shiftDecrement();
+	/* nombres de compatibilidad: alias sin codigo extra */
+	#define LiquidCrystal_pcf2119_printLeft      LiquidCrystal_pcf2119_rightToLeft
+	#define LiquidCrystal_pcf2119_printRight     LiquidCrystal_pcf2119_leftToRight
+	#define LiquidCrystal_pcf2119_shiftIncrement LiquidCrystal_pcf2119_autoscroll
+	#define LiquidCrystal_pcf2119_shiftDecrement LiquidCrystal_pcf2119_noAutoscroll
 	void LiquidCrystal_pcf2119_noBacklight();
 	void LiquidCrystal_pcf2119_backlight();
 	bool LiquidCrystal_pcf2119_getBacklight();
@@ -309,5 +310,23 @@
 
 
 #endif /* c interface */
+
+
+/* Al generar los prototipos del sketch (IDE 2.x) los metodos generados no
+ * se expanden: ver xmacro.h y recipe.preproc.macros en platform.txt. */
+#ifdef SDUINO_PREPROC
+#undef XLiquidCrystal_pcf2119_begin2
+#define XLiquidCrystal_pcf2119_begin2(...)
+#undef XLiquidCrystal_pcf2119_begin3
+#define XLiquidCrystal_pcf2119_begin3(...)
+#undef XLiquidCrystal_pcf2119_inst
+#define XLiquidCrystal_pcf2119_inst(...)
+#undef XLiquidCrystal_pcf2119_inst1
+#define XLiquidCrystal_pcf2119_inst1(...)
+#undef XLiquidCrystal_pcf2119_inst2
+#define XLiquidCrystal_pcf2119_inst2(...)
+#undef XLiquidCrystal_pcf2119_inst3
+#define XLiquidCrystal_pcf2119_inst3(...)
+#endif
 
 #endif // _LIQUIDCRYSTAL_PCF2119_H_

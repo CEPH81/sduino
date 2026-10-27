@@ -64,6 +64,7 @@ void HardwareSerial_begin(unsigned long baud);
 void HardwareSerial_begin_config(unsigned long baud, uint8_t config);
 
 int HardwareSerial_available(void);
+int HardwareSerial_peek(void);
 int HardwareSerial_read(void);
 size_t HardwareSerial_write(uint8_t c);
 void HardwareSerial_flush(void);
@@ -89,14 +90,30 @@ void HardwareSerial_end(void);
 #define Serial_write		HardwareSerial_write
 #define Serial_flush		HardwareSerial_flush
 #define Serial_end		HardwareSerial_end
+#define Serial_peek		HardwareSerial_peek
 
 
 // "inherit" all print methods from the Print "class"
 
 XPrintMethods   (HardwareSerial,Serial)
 
-// This define has to be at the end because it would interfear with the
-// XPrintMethods macro
-#define Serial			HardwareSerial()
+// Sintaxis estilo Arduino en el sketch: Serial.begin(9600), Serial.println(x)...
+// (sdcc.sh convierte "Serial.metodo(" en "Serial__metodo("; ver sduino_obj.h)
+#include <sduino_obj.h>
+#ifdef SDUINO_SKETCH
+#define Serial__begin(...)          S8_OVERLOAD(Serial__begin, __VA_ARGS__)
+#define Serial__begin1(baud)        HardwareSerial_begin(baud)
+#define Serial__begin2(baud, cfg)   HardwareSerial_begin_config(baud, cfg)
+#define Serial__end()               HardwareSerial_end()
+#define Serial__available()         HardwareSerial_available()
+#define Serial__peek()              HardwareSerial_peek()
+#define Serial__read()              HardwareSerial_read()
+#define Serial__flush()             HardwareSerial_flush()
+#define Serial__print(...)          S8_PRINT(HardwareSerial_write, __VA_ARGS__)
+#define Serial__println(...)        S8_PRINTLN(HardwareSerial_write, __VA_ARGS__)
+#define Serial__write(...)          S8_WRITE(HardwareSerial_write, __VA_ARGS__)
+// "if (Serial)" / "while (!Serial)": el puerto siempre esta listo
+#define Serial                      (1)
+#endif
 
 #endif

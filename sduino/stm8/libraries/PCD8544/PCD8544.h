@@ -284,6 +284,22 @@ void PCD8544_drawColumn(unsigned char lines, unsigned char value);
 
 #endif /* c interface */
 
+
+/* Al generar los prototipos del sketch (IDE 2.x) los metodos generados no
+ * se expanden: ver xmacro.h y recipe.preproc.macros en platform.txt. */
+#ifdef SDUINO_PREPROC
+#undef XPCD8544Methods
+#define XPCD8544Methods(...)
+#undef XPCD8544begin
+#define XPCD8544begin(...)
+#undef XPCD8544begin2
+#define XPCD8544begin2(...)
+#undef XPCD8544begin3
+#define XPCD8544begin3(...)
+#undef XPCD8544inst
+#define XPCD8544inst(...)
+#endif
+
 #endif  /* PCD8544_H */
 
 

@@ -109,13 +109,26 @@
 
 // private data //////////////////////////////////////////////////////////////
 
-#define SERIAL_BUFFER_SIZE 16
+/* Tamano de los buffers de recepcion y transmision (potencia de 2, <= 128).
+ * Con 2 KB de RAM o mas se usan 64 bytes como en Arduino; en los micros de
+ * 1 KB (STM8S103/003/001), 16. Se puede cambiar con -DSERIAL_BUFFER_SIZE=n. */
+#ifndef SERIAL_BUFFER_SIZE
+# if defined(STM8S105) || defined(STM8S005) || defined(STM8S207) || defined(STM8S007) || \
+     defined(STM8S208) || defined(STM8AF52Ax) || defined(STM8AF62Ax) || defined(STM8AF626x)
+#  define SERIAL_BUFFER_SIZE 64
+# else
+#  define SERIAL_BUFFER_SIZE 16
+# endif
+#endif
 typedef struct ring_buffer
 {
   unsigned char buffer[SERIAL_BUFFER_SIZE];
-  volatile unsigned int head;
-  volatile unsigned int tail;
+  volatile uint8_t head;      /* 8 bits: lectura atomica y codigo mas corto */
+  volatile uint8_t tail;
 } ring_buffer;
+
+/* siguiente posicion del buffer circular (en 8 bits, sin division) */
+#define SERIAL_NEXT(i)  ((uint8_t)((i) + 1) & (SERIAL_BUFFER_SIZE - 1))
 
 
 extern ring_buffer rx_buffer;// = { { 0 }, 0, 0};

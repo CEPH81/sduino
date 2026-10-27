@@ -59,12 +59,12 @@ endif
 ifeq ($(OS),Windows_NT)
     ifndef SDCC_PATH
         # for Windows always assume the tools to be in this dir tree
-        SDCC_PATH := $(ARDUINO_DIR)/../tools/sdcc/bin
-	AVR_TOOLS_DIR = $(ARDUINO_DIR)/../tools/sdcc
+        SDCC_PATH := $(ARDUINO_DIR)/../tools/sdcc/3.9.1/bin
+	AVR_TOOLS_DIR = $(ARDUINO_DIR)/../tools/sdcc/3.9.1
     endif
-    SHELL := $(ARDUINO_DIR)/../tools/win/busybox.exe
+    SHELL := $(ARDUINO_DIR)/tools/win/busybox.exe
     .SHELLFLAGS=ash -c
-    SIZE := $(ARDUINO_DIR)/../tools/wrapper/sdsize.sh
+    SIZE := $(ARDUINO_DIR)/tools/wrapper/sdsize.sh
 #    PATH  := $(realpath $(ARDUINO_DIR)/../tools/win):$(PATH)
 else
     # Linux (and Mac): expect SDCC to be in /opt/sdcc

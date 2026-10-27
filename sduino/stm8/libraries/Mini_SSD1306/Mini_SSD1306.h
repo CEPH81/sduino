@@ -297,4 +297,16 @@ All text above, and the splash screen below must be included in any redistributi
 
 #endif /* c interface */
 
+
+/* Al generar los prototipos del sketch (IDE 2.x) los metodos generados no
+ * se expanden: ver xmacro.h y recipe.preproc.macros en platform.txt. */
+#ifdef SDUINO_PREPROC
+#undef XMini_SSD1306Begin
+#define XMini_SSD1306Begin(...)
+#undef XMini_SSD1306Inst
+#define XMini_SSD1306Inst(...)
+#undef XMini_SSD1306Methods
+#define XMini_SSD1306Methods(...)
+#endif
+
 #endif /* _Mini_SSD1306_H_ */

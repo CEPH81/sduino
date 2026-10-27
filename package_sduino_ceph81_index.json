@@ -1,0 +1,84 @@
+{
+  "packages": [
+    {
+      "name": "sduino",
+      "maintainer": "CEPH81 (basado en sduino de Michael Mayer)",
+      "websiteURL": "https://github.com/CEPH81/sduino",
+      "email": "",
+      "help": {
+        "online": "https://github.com/CEPH81/sduino"
+      },
+      "platforms": [
+        {
+          "name": "STM8S (sduino para Arduino IDE 2.x)",
+          "architecture": "stm8",
+          "version": "0.6.0",
+          "category": "Contributed",
+          "url": "https://github.com/CEPH81/sduino/releases/download/v0.6.0/sduino-stm8-0.6.0.tar.bz2",
+          "archiveFileName": "sduino-stm8-0.6.0.tar.bz2",
+          "checksum": "SHA-256:5a08685a4ebd8e00127611845ac0265d060ac8ec686c5937207d6a9bfec66e06",
+          "size": "2742751",
+          "help": {
+            "online": "https://github.com/CEPH81/sduino"
+          },
+          "boards": [
+            {
+              "name": "STM8S103F3 Breakout Board"
+            },
+            {
+              "name": "STM8S105C6 Discovery Board"
+            },
+            {
+              "name": "STM8S105K4T6 Breakout Board (STM8 Black)"
+            },
+            {
+              "name": "STM8S005K6T6 (pinout STM8 Black)"
+            },
+            {
+              "name": "sduino UNO (STM8S105K6)"
+            },
+            {
+              "name": "sduino MB (STM8S208MBT6B)"
+            }
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "sduino",
+              "name": "sdcc",
+              "version": "build.11242"
+            }
+          ]
+        }
+      ],
+      "tools": [
+        {
+          "name": "sdcc",
+          "version": "build.11242",
+          "systems": [
+            {
+              "host": "x86_64-pc-linux-gnu",
+              "url": "https://github.com/tenbaht/sduino/releases/download/v0.5/sdcc-stm8-amd64-unknown-linux2.5-20190502-11242.tar.bz2",
+              "archiveFileName": "sdcc-stm8-amd64-unknown-linux2.5-20190502-11242.tar.bz2",
+              "checksum": "SHA-256:f69122faf38e72cccb7acc9b4d215e6e74901c053e04295c7ec8f4c29c5bad65",
+              "size": "2604557"
+            },
+            {
+              "host": "i686-mingw32",
+              "url": "https://github.com/tenbaht/sduino/releases/download/v0.5/sdcc-stm8-i586-mingw32msvc-20190502-11242.tar.bz2",
+              "archiveFileName": "sdcc-stm8-i586-mingw32msvc-20190502-11242.tar.bz2",
+              "checksum": "SHA-256:1acdd54d62207bced3abb51fc401b0af85ef4711525033764b089fa0db7cb868",
+              "size": "3034472"
+            },
+            {
+              "host": "x86_64-apple-darwin",
+              "url": "https://github.com/tenbaht/sduino/releases/download/v0.5/sdcc-stm8-x86_64-apple-macosx-20190502-11242.tar.bz2",
+              "archiveFileName": "sdcc-stm8-x86_64-apple-macosx-20190502-11242.tar.bz2",
+              "checksum": "SHA-256:b34b236bef7a2c87db601995e95e928cca1af56c8fd7018cf5612a8314afb559",
+              "size": "2803984"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -220,4 +220,64 @@
         Xprinthelper2	(class,instance,println_fd,double,uint8_t)
 
 
+
+/*
+ * Al generar los prototipos de funciones del sketch (IDE 2.x, ctags) estos
+ * metodos no se expanden: si el IDE les crea un prototipo, SDCC los compila
+ * todos aunque no se usen y enlaza codigo de mas (p. ej. todo el soporte de
+ * float por lcd_print_f). Ver recipe.preproc.macros en platform.txt.
+ */
+#ifdef SDUINO_PREPROC
+#undef X2Method0
+#define X2Method0(...)
+#undef X2Method0return
+#define X2Method0return(...)
+#undef X2Method1
+#define X2Method1(...)
+#undef X2Method1return
+#define X2Method1return(...)
+#undef X2Method2
+#define X2Method2(...)
+#undef X2Method2return
+#define X2Method2return(...)
+#undef X2Method3
+#define X2Method3(...)
+#undef X2Method3return
+#define X2Method3return(...)
+#undef X2Method4
+#define X2Method4(...)
+#undef X2Method4return
+#define X2Method4return(...)
+#undef X4Method0
+#define X4Method0(...)
+#undef X4Method0return
+#define X4Method0return(...)
+#undef X4Method1
+#define X4Method1(...)
+#undef X4Method1return
+#define X4Method1return(...)
+#undef XConstructor1
+#define XConstructor1(...)
+#undef XConstructor2
+#define XConstructor2(...)
+#undef XConstructor3
+#define XConstructor3(...)
+#undef XMethod0
+#define XMethod0(...)
+#undef XMethod0return
+#define XMethod0return(...)
+#undef XMethod1
+#define XMethod1(...)
+#undef XMethod1return
+#define XMethod1return(...)
+#undef Xprintchar
+#define Xprintchar(...)
+#undef Xprinthelper0
+#define Xprinthelper0(...)
+#undef Xprinthelper1
+#define Xprinthelper1(...)
+#undef Xprinthelper2
+#define Xprinthelper2(...)
+#endif
+
 #endif

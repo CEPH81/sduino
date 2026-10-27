@@ -39,6 +39,10 @@
 
 #include "Print.h"
 
+#define printNumber	Print_print_ub
+#define printInt	Print_print_ib
+
+
 #ifdef _GCC_
 #undef printChr
 #define printChr(C) putchar(C)

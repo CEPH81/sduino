@@ -224,4 +224,24 @@
 
 #endif /* c interface */
 
+
+/* Al generar los prototipos del sketch (IDE 2.x) los metodos generados no
+ * se expanden: ver xmacro.h y recipe.preproc.macros en platform.txt. */
+#ifdef SDUINO_PREPROC
+#undef XLCDbegin2
+#define XLCDbegin2(...)
+#undef XLCDbegin3
+#define XLCDbegin3(...)
+#undef XLiquidCrystal_inst10
+#define XLiquidCrystal_inst10(...)
+#undef XLiquidCrystal_inst11
+#define XLiquidCrystal_inst11(...)
+#undef XLiquidCrystal_inst6
+#define XLiquidCrystal_inst6(...)
+#undef XLiquidCrystal_inst7
+#define XLiquidCrystal_inst7(...)
+#undef XLiquidCrystalinst
+#define XLiquidCrystalinst(...)
+#endif
+
 #endif /* LiquidCrystal */

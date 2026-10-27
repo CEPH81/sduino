@@ -168,7 +168,7 @@
 // INTERRUPT_HANDLER(UART4_RX_IRQHandler, 18);              /* UART4 RX */
 #endif /* (STM8AF622x) */
  
-// INTERRUPT_HANDLER(I2C_IRQHandler, 19);                   /* I2C */
+ INTERRUPT_HANDLER(I2C_IRQHandler, 19);                    /* I2C (twi_isr.c: llama a twi_isr_hook) */
 
 #if defined(STM8S105) || defined(STM8S005) ||  defined (STM8AF626x)
  INTERRUPT_HANDLER(UART2_TX_IRQHandler, 20);              /* UART2 TX */

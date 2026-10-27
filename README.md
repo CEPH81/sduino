@@ -1,133 +1,165 @@
-# Sduino: Small Devices Arduino
+# sduino para Arduino IDE 2.x — STM8S
 
-**Getting started on the STM8 the easy way.**
+Núcleo Arduino para microcontroladores **STM8S** compilado con **SDCC**, adaptado al
+**Arduino IDE 2.x** a partir de [sduino de Michael Mayer](https://github.com/tenbaht/sduino).
 
-An Arduino-like programming API that can be used from within the Arduino IDE
-or for Makefile-controlled builds.
+Placas principales de esta versión:
 
- * [Project website](https://tenbaht.github.io/sduino/) for more
-   information on supported hardware and the programming API
+| Placa | Micro | Flash | RAM | EEPROM |
+|---|---|---|---|---|
+| **STM8S105K4T6 Breakout Board (STM8 Black)** | STM8S105K4T6 | 16 KB | 2 KB | 1 KB |
+| **STM8S005K6T6 (pinout STM8 Black)** — nueva | STM8S005K6T6 | 32 KB | 2 KB | 128 B |
 
- * [github issue tracker](https://github.com/tenbaht/sduino/issues) for bug
-   reports and other issues tightly related to the repository content
+También siguen: STM8S103F3 (placa azul), STM8S105C6 Discovery, sduino UNO (STM8S105K6) y sduino MB (STM8S208MB).
 
-Since this project is based on the SDCC Small Devices C compiler, I called
-it "Small Devices -uino" or "Small-duino". It is entirely based on free
-tools that are available for Linux, MacOS, and Windows: SDCC, make, and
-stm8flash.
+## Novedades de la 0.6.0
 
-This project is not supposed to be “better than Arduino”. It’s purpose
-is to give you a head start into a different CPU architecture if you happen
-to have a professional need or a private desire for it.
+- **Arduino IDE 2.x**: compila, genera los prototipos de funciones y carga con
+  **ST-Link sin elegir puerto**. Funciona en Windows (con el `busybox` incluido), Linux y macOS.
+- **Sintaxis estilo Arduino sin coste**: en el sketch se puede escribir
+  `Serial.begin(9600)`, `Serial.println(x, HEX)`, `Wire.beginTransmission(0x27)`,
+  `EEPROM.put(0, dato)`, `SPI.transfer(b)`… Cada llamada se convierte al compilar en
+  una llamada directa a la función en C: no ocupa más que la sintaxis C (`Serial_print_s()`…)
+  y solo se enlaza lo que se usa. La sintaxis C de siempre sigue funcionando.
+- **I²C nuevo** (controlador `twi` en el core, compartido por `Wire` e `I2C`):
+  - nunca se cuelga: tiempo de espera en cada paso, tope de vueltas aunque `millis()` no avance
+    y **recuperación del bus** (9 pulsos de reloj + STOP) si un esclavo deja SDA en bajo;
+  - velocidad exacta para el F_CPU real, de 10 a 400 kHz (`Wire.setClock(400000)`);
+  - secuencias de lectura de 1, 2 y N bytes según el manual (RM0016) e inicio repetido real;
+  - modo esclavo por interrupción (`Wire.begin(direccion)`, `onReceive`, `onRequest`);
+  - `Wire`: un 7 % menos de flash de media (hasta un 11 %); librería `I2C`: un 16 % menos.
+- **Menos flash en todos los ejemplos** (comparado con sduino 0.5, misma placa y compilador):
+  pantallas LCD por I²C −18 %, OLED SSD1306 −21 %, Stepper −2 %, el resto −0,5 a −1 %;
+  −5,5 % en total y ningún ejemplo ocupa más que antes. 18 ejemplos que antes no
+  compilaban en la STM8 Black ahora sí.
+- `Serial`: buffers de 64 bytes en los micros con 2 KB de RAM (16 en los de 1 KB).
+- `isDigit()`, `isAlpha()`, `toUpperCase()`… (`<ctype.h>` incluido, como en Arduino).
+- Correcciones: ejemplos de LiquidCrystal que no compilaban en las placas de 32 patas,
+  funciones que faltaban en LiquidCrystal_I2C/pcf2119, ejemplo HMC5883L actualizado,
+  `EEPROM.length()` correcto en STM8S005/003, librerías marcadas para `stm8` (el IDE no
+  las confunde con las de AVR que tenga instaladas).
 
+## Instalación
 
+### A) Gestor de placas (cuando esté publicada la release)
 
-## Installation
+1. **Archivo → Preferencias → URLs adicionales del gestor de placas**:
+   ```
+   https://raw.githubusercontent.com/CEPH81/sduino/development/package_sduino_ceph81_index.json
+   ```
+2. **Herramientas → Placa → Gestor de placas**, busque **sduino** e instale
+   *STM8S (sduino para Arduino IDE 2.x)*. Se descarga también el compilador SDCC.
 
-Starting with version 0.3.0 automatic IDE integration is supported via the
-Arduino Boards Manager. This is the recommanded way of installation now. For
-a manual non-IDE installation please check the [manual installation
-instructions](https://tenbaht.github.io/sduino/usage/manual-install/).
+### B) Manual (repositorio clonado)
 
-Start the Arduino-IDE. In *File->Preferences*, *Settings* tab, enter
+En Windows, con [git](https://git-scm.com) instalado, en PowerShell:
 
-> https://raw.githubusercontent.com/tenbaht/sduino/master/package_sduino_stm8_index.json
+```powershell
+git clone -b development https://github.com/CEPH81/sduino.git $env:TEMP\sduino-inst
+powershell -ExecutionPolicy Bypass -File $env:TEMP\sduino-inst\instalar_windows.ps1
+```
 
-as an *Additional Boards Manager URL*.
+El script clona el repositorio en `Documentos\Arduino\sduino-repo`, crea el enlace
+`Documentos\Arduino\hardware\sduino` y descarga SDCC 3.9. Para actualizar más tarde:
+`git pull` en `sduino-repo` (o volver a ejecutar el script).
 
-* Open *Tools->Board:...->Boards Manager*
-* Find Sduino by typing 'sd' into the search line
-* Click on the list entry
-* Click on *Install*.
+A mano (Windows/Linux/macOS): la carpeta `sduino` del repositorio debe quedar en
+`<sketchbook>/hardware/sduino` y SDCC 3.9 (compilación 11242 de
+[sduino 0.5](https://github.com/tenbaht/sduino/releases/tag/v0.5)) descomprimido en
+`<sketchbook>/hardware/sduino/tools/sdcc/3.9.1/` (con `bin/sdcc` dentro).
 
-Now you should find a new entry *STM8S Boards* in the list at
-*Tools->Board:...*
+### Controlador del ST-Link en Windows
 
-* Choose *STM8S103F3 Breakout Board* from the list
-* open the standard Blink example from *File->Examples->01. Basics->Blink*
-* compile it by hitting *Verify*
+`stm8flash` usa libusb: instale el controlador **WinUSB** para el ST-Link con
+[Zadig](https://zadig.akeo.ie) (*Options → List All Devices*, elija *STM32 STLink*,
+controlador *WinUSB*, *Replace Driver*). En Linux, añada una regla udev para el ST-Link.
 
+## Uso
 
-## Known issues
+1. **Herramientas → Placa → STM8S (sduino)** → *STM8S105K4T6 Breakout Board (STM8 Black)*
+   o *STM8S005K6T6 (pinout STM8 Black)*.
+2. **Método de carga**: *ST-Link/V2 (stm8flash)* (por defecto, sin puerto) o
+   *Serie (stm8gal, bootloader ROM)*.
+3. **Optimización**: *Tamaño de código* (por defecto), *Tamaño mínimo* (compila más
+   lento) o *Velocidad*.
+4. Pulse **Subir**.
 
-**The Arduino IDE version 1.8.7 is buggy, use 1.8.8 instead.**
+Conexión del ST-Link V2: **SWIM ↔ PD1**, **NRST ↔ NRST**, **GND ↔ GND**, **3,3 V ↔ 3V3**.
 
-IDE error message **select upload port first** (IDE v1.8.7 only): Update to
-IDE >= 1.8.8 or apply this
-[workaround](https://github.com/tenbaht/sduino/issues/68#issuecomment-441425529).
+Si el micro está protegido contra lectura (algunas placas vienen así de fábrica):
+**Herramientas → Grabar bootloader** lo desbloquea (borra la memoria y restaura los
+option bytes).
 
-Very slow compilation after using "save as" (IDE v1.8.7 only): After saving
-a file under a different name the CPU load maxes out for one CPU core and
-the IDE reacts extremly slow. Exit the Arduino IDE and re-open it. Update to
-IDE >= 1.8.8.
+### Pines de la STM8 Black y la STM8S005K6
 
-**bash.exe: warning: could not find /tmp, please create!**: Shows up on windows
-systems when using SDuiono versions < 0.5. Annoying, but harmless. Update to
-release v0.5.
+| Pin | Puerto | Función | | Pin | Puerto | Función |
+|---|---|---|---|---|---|---|
+| 0 | PC3 | PWM | | 13 | PA1 | |
+| 1 | PC4 | PWM | | 14 | PA2 | |
+| 2 | PC5 | SPI SCK | | 15 | PF4 | |
+| 3 | PC6 | SPI MOSI | | 16 | PB5 | **SDA**, A0 |
+| 4 | PC7 | SPI MISO | | 17 | PB4 | **SCL**, A1 |
+| 5 | PD0 | PWM | | 18 | PB3 | A2 |
+| 6 | PD1 | SWIM (ST-Link) | | 19 | PB2 | A3 |
+| 7 | PD2 | PWM | | 20 | PB1 | A4 |
+| 8 | PD3 | PWM | | 21 | PB0 | A5 |
+| 9 | PD4 | PWM | | 22 | PE5 | LED_BUILTIN, SPI SS |
+| 10 | PD5 | **TX** (Serial) | | 23 | PC1 | PWM |
+| 11 | PD6 | **RX** (Serial) | | 24 | PC2 | PWM |
+| 12 | PD7 | | | | | |
 
+También se pueden usar los nombres: `digitalWrite(PD3, HIGH)`.
 
-## Included libraries
+**I²C**: las patas SDA/SCL del STM8S son de drenador abierto real y **no tienen pull-up
+interna**: ponga resistencias de 4,7 kΩ a 3,3 V o 5 V.
 
-Most parts of the Arduino core system and some Arduino libraries are already
-ported to C-syntax. The resulting API is still very close to the C++ version
-and porting an existing application is not hard. Check out the [migration
-guide](https://tenbaht.github.io/sduino/api/migration/) for details.
+## Escribir sketches
 
+```cpp
+#include <Wire.h>
 
-#### Communication
+void setup() {
+  Serial.begin(115200);
+  Wire.begin();
+  Wire.setClock(400000);
+}
 
-* SPI: Real hardware-SPI up to 10MHz.
-* Wire: Port of the stock Wire library for I2C communication (with
-  improvements)
-* I2C: Port of the I2C master library by Wayne Truchsess
-* HardwareSerial: The standard serial interface.
+void loop() {
+  Wire.beginTransmission(0x27);
+  Wire.write(0x55);
+  byte err = Wire.endTransmission();   // 0 ok, 2 NACK direccion, 5 tiempo agotado...
+  Serial.print("Resultado: ");
+  Serial.println(err);
+  delay(1000);
+}
+```
 
-#### Displays
+Reglas a tener en cuenta (SDCC solo compila C):
 
-* LiquidCrystal: HD44780 based text LCDs
-* LiquidCrystal_I2C: HD44780 based text LCDs with I2C converter backpack
-* LiquidCrystal_pcf2119: PCF2119 based text LCDs with I2C connection
-* PCD8544: Monochrome graphical LCD based on the PCD8544 controller like the
-  Nokia 5110 display. SPI mode only.
-* Mini_SSD1306: SSD1306-based monochrome OLED displays with 128x64 pixels.
-  I2C support only.
+- `Serial`, `Wire`, `EEPROM` y `SPI` admiten la sintaxis con punto. Las librerías con
+  objetos que se crean en el sketch (`LiquidCrystal`, `Servo`, `Stepper`…) usan la forma
+  de sduino: `LiquidCrystal(lcd, …);` y luego `lcd_print_s("hola")`, `lcd_setCursor(0, 1)`.
+  Ver los ejemplos de cada librería.
+- No hay `String` ni clases propias en el sketch.
+- Los ejemplos de **Archivo → Ejemplos** (sección de la placa) están adaptados.
 
-#### Storage
+## Depuración
 
-* EEPROM: Port of the stock EEPROM library for accessing the buildin EEPROM
+El botón de depurar del IDE 2.x solo funciona con micros ARM Cortex-M: el STM8 no tiene
+soporte ahí. Para depurar paso a paso un STM8 con ST-Link use
+[PlatformIO](https://docs.platformio.org/en/latest/platforms/ststm8.html) (OpenOCD +
+stm8-gdb) o la extensión [STM8 Debug para VS Code](https://github.com/github0null/stm8-debug).
 
-#### Motor control
+## Pruebas
 
-* Stepper: Stepper motors with 2, 4 or 5 phases.
-* Servo: Up to 12 servos using only 1 timer.
+- `test/twi_host`: el controlador I²C se prueba en el PC contra un modelo del periférico
+  I²C del STM8S (lecturas de 1/2/N bytes, NACK, bus bloqueado, 3000 operaciones al azar):
+  `make -C test/twi_host`.
+- Todos los ejemplos (71) compilan para la STM8 Black y la STM8S005K6.
 
+## Créditos y licencia
 
-## Compatibility with the Arduino world
-
-Since there is no free C++ compiler for the STM8, it is impossible to do a
-full 1:1 port of the whole enviroment as is has been done for the STM32 and
-the ESP8266.
-
-This is not a drop-in replacement for an AVR, but thanks to some C
-preprocessor magic the programming API is still very, very similar and it is
-often enough to just move over the opening bracket of the class
-instanciation statement and to replace the dot in a method call for an
-underscore. Check the [migration
-guide](https://tenbaht.github.io/sduino/api/migration/) for an overview.
-
-
-
-## Supported Systems:
-
-Arduino IDE versions 1.8.11, 1.8.8, 1.8.5 and 1.6.13 are tested, but
-most versions >=1.6.6 should work.
-
-Avoid using Version 1.8.7, it contains some known bugs. It might require a
-[workaround](https://github.com/tenbaht/sduino/issues/68#issuecomment-441425529)
-if you see an error message "select upload port first".
-
-* Linux 64 bit: Tested on Mint 19/Ubuntu 18.04
-* Linux 32 bit: Tested on Mint 19/Ubuntu 18.04
-* Windows: Tested on Windows 7. Sduino might work on XP (not tested), but
-  the ST-Link/V2 driver is not available anymore for XP.
-* MacOS: tested on 10.13.
+Basado en [sduino](https://github.com/tenbaht/sduino) de Michael Mayer (LGPL 2.1) y en el
+núcleo de Arduino. Librería estándar de periféricos (SPL) de STMicroelectronics.
+Adaptación al IDE 2.x, STM8S005K6 e I²C nuevo: CEPH81.
+La documentación original (en inglés) sigue en `docs/`.

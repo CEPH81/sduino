@@ -3,6 +3,6 @@
  */
 int HardwareSerial_available(void)
 {
-  return (unsigned int)(SERIAL_BUFFER_SIZE + rx_buffer.head - rx_buffer.tail) % SERIAL_BUFFER_SIZE;
+  return (uint8_t)(rx_buffer.head - rx_buffer.tail) & (SERIAL_BUFFER_SIZE - 1);
 }
 

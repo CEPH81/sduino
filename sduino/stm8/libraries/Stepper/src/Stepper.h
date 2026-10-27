@@ -321,5 +321,19 @@ void Stepper_stepMotor(struct Stepper_s *this, int this_step);
 
 #endif // ifdef __cplusplus
 
+
+/* Al generar los prototipos del sketch (IDE 2.x) los metodos generados no
+ * se expanden: ver xmacro.h y recipe.preproc.macros en platform.txt. */
+#ifdef SDUINO_PREPROC
+#undef XStepperBegin2
+#define XStepperBegin2(...)
+#undef XStepperBegin4
+#define XStepperBegin4(...)
+#undef XStepperBegin5
+#define XStepperBegin5(...)
+#undef XStepperInst
+#define XStepperInst(...)
+#endif
+
 #endif
 

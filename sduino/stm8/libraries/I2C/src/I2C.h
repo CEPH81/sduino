@@ -78,6 +78,8 @@
 #ifndef I2C_h
 #define I2C_h
 
+#include <twi.h>
+
 /* TWI status codes */
 /*
  * return values for functions that use the timeOut feature 
@@ -120,8 +122,6 @@ uint8_t I2C_readbuf(uint8_t address, uint8_t numberBytes, uint8_t * dataBuffer);
 uint8_t I2C_readbuf_reg(uint8_t address, uint8_t registerAddress,
 			uint8_t numberBytes, uint8_t * dataBuffer);
 
-// not sure if these really need to be public:
-//    extern uint8_t returnStatus;
-//    extern uint8_t data[MAX_BUFFER_SIZE];
+
 
 #endif

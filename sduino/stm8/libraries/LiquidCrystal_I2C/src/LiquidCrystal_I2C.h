@@ -134,12 +134,13 @@
 
 	void LiquidCrystal_I2C_scrollDisplayLeft();
 	void LiquidCrystal_I2C_scrollDisplayRight();
-	void LiquidCrystal_I2C_printLeft();
-	void LiquidCrystal_I2C_printRight();
 	void LiquidCrystal_I2C_leftToRight();
 	void LiquidCrystal_I2C_rightToLeft();
-	void LiquidCrystal_I2C_shiftIncrement();
-	void LiquidCrystal_I2C_shiftDecrement();
+	/* nombres de compatibilidad (LiquidCrystal_I2C 1.x): alias sin codigo extra */
+	#define LiquidCrystal_I2C_printLeft      LiquidCrystal_I2C_rightToLeft
+	#define LiquidCrystal_I2C_printRight     LiquidCrystal_I2C_leftToRight
+	#define LiquidCrystal_I2C_shiftIncrement LiquidCrystal_I2C_autoscroll
+	#define LiquidCrystal_I2C_shiftDecrement LiquidCrystal_I2C_noAutoscroll
 	void LiquidCrystal_I2C_noBacklight();
 	void LiquidCrystal_I2C_backlight();
 	bool LiquidCrystal_I2C_getBacklight();
@@ -331,5 +332,25 @@
 
 
 #endif /* c interface */
+
+
+/* Al generar los prototipos del sketch (IDE 2.x) los metodos generados no
+ * se expanden: ver xmacro.h y recipe.preproc.macros en platform.txt. */
+#ifdef SDUINO_PREPROC
+#undef XLiquidCrystal_I2C_begin0
+#define XLiquidCrystal_I2C_begin0(...)
+#undef XLiquidCrystal_I2C_begin2
+#define XLiquidCrystal_I2C_begin2(...)
+#undef XLiquidCrystal_I2C_begin3
+#define XLiquidCrystal_I2C_begin3(...)
+#undef XLiquidCrystal_I2C_inst
+#define XLiquidCrystal_I2C_inst(...)
+#undef XLiquidCrystal_I2C_inst1
+#define XLiquidCrystal_I2C_inst1(...)
+#undef XLiquidCrystal_I2C_inst3
+#define XLiquidCrystal_I2C_inst3(...)
+#undef XLiquidCrystal_I2C_inst4
+#define XLiquidCrystal_I2C_inst4(...)
+#endif
 
 #endif // FDB_LIQUID_CRYSTAL_I2C_H

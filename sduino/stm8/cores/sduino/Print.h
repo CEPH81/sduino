@@ -36,12 +36,6 @@
 // for the function pointer to the actual write function
 typedef size_t (*writefunc_p)(uint8_t c);
 
-// abreviations of the actual function names, mostly for internal use
-#define printBuf	Print_print_sn
-#define printStr	Print_print_s
-#define printNumber	Print_print_ub
-#define printInt	Print_print_ib
-#define println		Print_println
 
 
 // the more sophisticated Arduino-Style functions. Variants of the standard

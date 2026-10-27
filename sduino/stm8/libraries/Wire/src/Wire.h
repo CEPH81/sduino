@@ -1,137 +1,123 @@
 /*
-  TwoWire.h - TWI/I2C library for Arduino & Wiring
-  Copyright (c) 2006 Nicholas Zambetti.  All right reserved.
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-  Modified 2012 by Todd Krein (todd@krein.org) to implement repeated starts
-  Modified 2017 by Michael Mayer to plain C for use with Sduino
-*/
-
+ * Wire.h - Libreria I2C (Wire) para sduino / STM8S.
+ *
+ * Usa el controlador twi.c del core: registros directos, tiempo de espera
+ * en todas las operaciones (no se cuelga), recuperacion del bus y
+ * velocidad exacta (100 kHz por defecto, hasta 400 kHz).
+ *
+ * Dos formas de uso:
+ *
+ *   Estilo Arduino (en el sketch):        Estilo C de sduino:
+ *     Wire.begin();                         Wire_begin();
+ *     Wire.setClock(400000);                Wire_setClock(400000);
+ *     Wire.beginTransmission(0x27);         Wire_beginTransmission(0x27);
+ *     Wire.write(0x55);                     Wire_write(0x55);
+ *     err = Wire.endTransmission();         err = Wire_endTransmission();
+ *     Wire.requestFrom(0x68, 6);            Wire_requestFrom(0x68, 6);
+ *     while (Wire.available())              while (Wire_available())
+ *       b = Wire.read();                      b = Wire_read();
+ *
+ * Esclavo: Wire.begin(direccion) + Wire.onReceive(f) / Wire.onRequest(f).
+ *
+ * Pines: SCL = PB4, SDA = PB5 (STM8S103/105/005). Son de drenador abierto
+ * verdadero: ponga resistencias de pull-up externas (4,7 kOhm a 3,3/5 V).
+ *
+ * endTransmission() devuelve: 0 ok, 1 demasiados datos, 2 NACK a la
+ * direccion, 3 NACK a un dato, 4 otro error, 5 tiempo agotado.
+ *
+ * Basada en TwoWire de Arduino (Nicholas Zambetti, Todd Krein) y en la
+ * version en C de Michael Mayer. LGPL 2.1.
+ */
 #ifndef TwoWire_h
 #define TwoWire_h
 
-#include <stdint.h>
-#include <stdbool.h>
-//#include "Stream.h"
+#include <Arduino.h>
+#include <twi.h>
 
-#define BUFFER_LENGTH 32
+#define BUFFER_LENGTH   TWI_BUFFER_LENGTH
+#define WIRE_HAS_END    1
+#define WIRE_HAS_TIMEOUT 1
 
-// WIRE_HAS_END means Wire has end()
-#define WIRE_HAS_END 1
+/* --- interfaz en C --- */
+void    Wire_begin(void);
+void    Wire_beginSlave(uint8_t address);
+void    Wire_end(void);
+/* velocidad en Hz (10000..400000); con una constante no hay division en el micro */
+#define Wire_setClock(hz)       twi_setFrequency(hz)
+void    Wire_setTimeout(uint16_t ms);
+uint8_t Wire_lastError(void);
 
-/*
-class TwoWire : public Stream
-{
-  private:
-    static uint8_t rxBuffer[];
-    static uint8_t rxBufferIndex;
-    static uint8_t rxBufferLength;
+void    Wire_beginTransmission(uint8_t address);
+uint8_t Wire_endTransmission0(void);
+uint8_t Wire_endTransmission1(uint8_t sendStop);
+#define Wire_endTransmission()  Wire_endTransmission1(1)
 
-    static uint8_t txAddress;
-    static uint8_t txBuffer[];
-    static uint8_t txBufferIndex;
-    static uint8_t txBufferLength;
-
-    static uint8_t transmitting;
-    static void (*user_onRequest)(void);
-    static void (*user_onReceive)(int);
-    static void onRequestService(void);
-    static void onReceiveService(uint8_t*, int);
-  public:
-    TwoWire();
-    void begin();
-    void begin(uint8_t);
-    void begin(int);
-    void end();
-    void setClock(uint32_t);
-    void beginTransmission(uint8_t);
-    void beginTransmission(int);
-    uint8_t endTransmission(void);
-    uint8_t endTransmission(uint8_t);
-    uint8_t requestFrom(uint8_t, uint8_t);
-    uint8_t requestFrom(uint8_t, uint8_t, uint8_t);
-    uint8_t requestFrom(uint8_t, uint8_t, uint32_t, uint8_t, uint8_t);
-    uint8_t requestFrom(int, int);
-    uint8_t requestFrom(int, int, int);
-    virtual size_t write(uint8_t);
-    virtual size_t write(const uint8_t *, size_t);
-    virtual int available(void);
-    virtual int read(void);
-    virtual int peek(void);
-    virtual void flush(void);
-    void onReceive( void (*)(int) );
-    void onRequest( void (*)(void) );
-
-    inline size_t write(unsigned long n) { return write((uint8_t)n); }
-    inline size_t write(long n) { return write((uint8_t)n); }
-    inline size_t write(unsigned int n) { return write((uint8_t)n); }
-    inline size_t write(int n) { return write((uint8_t)n); }
-    using Print::write;
-};
-
-extern TwoWire Wire;
-*/
-
-/* only this minimal interface is currently implemented: */
-void	Wire_begin(void);
-void	Wire_end(void);
-void	Wire_setClock(uint32_t);
-void	Wire_setTimeout(uint16_t);
-
-void		Wire_beginTransmission(uint8_t);
-uint8_t 	Wire_endTransmission1(uint8_t sendStop);
-inline uint8_t	Wire_endTransmission(void){return Wire_endTransmission1(true);}
-
-size_t	Wire_write(uint8_t);
-size_t	Wire_write_s(const uint8_t *);
-size_t	Wire_write_sn(const uint8_t *, size_t);
-int	Wire_available(void);
-int	Wire_read(void);
-int	Wire_peek(void);
-void	Wire_flush(void);
-
-uint8_t	Wire_requestFrom2(uint8_t address, uint8_t quantity);
-uint8_t	Wire_requestFrom3(uint8_t address, uint8_t quantity, uint8_t sendStop);
+uint8_t Wire_requestFrom2(uint8_t address, uint8_t quantity);
+uint8_t Wire_requestFrom3(uint8_t address, uint8_t quantity, uint8_t sendStop);
 uint8_t Wire_requestFrom5(uint8_t address, uint8_t quantity, uint32_t iaddress, uint8_t isize, uint8_t sendStop);
 
+size_t  Wire_write(uint8_t data);
+size_t  Wire_write_s(const char *str);
+size_t  Wire_write_sn(const uint8_t *data, size_t quantity);
+int     Wire_available(void);
+int     Wire_read(void);
+int     Wire_peek(void);
+void    Wire_flush(void);
 
-// Pseudo-OO interface: Plain C disguised as almost-C++, thanks to X-Macros
-//
-// We want to "inherit" the output functions from Print, so include that
-// header file as well before we start calling any macros.
+void    Wire_onReceive(void (*function)(int));
+void    Wire_onRequest(void (*function)(void));
 
 #include <xmacro.h>
 #include <Print.h>
 
-// Since this is a pre-instantiated singleton library we can add some
-// polymorphism for the requestFrom() method. Just distinguish by the number
-// of arguments.
-//#define Wire_write(...) VARFUNC(Wire_write, __VA_ARGS__)
+/* requestFrom con 2, 3 o 5 argumentos */
 #define Wire_requestFrom(...) VARFUNC(Wire_requestFrom, __VA_ARGS__)
 
-// Unfortunately, this only works for argument numbers > 0. So we can't do the
-// same for endTransmission() and endTransmission1(sendStop)
-//
-// this doesn't work (due to the way sdcc invokes the preprocessor sdcpp):
-//#define Wire_endTransmission(...) VARFUNC(Wire_requestFrom, __VA_ARGS__)
+/* Wire_print_s(), Wire_println_i()... como Serial */
+XPrintMethods(Wire, Wire)
 
-
-// "inherit" all Print methods using the macro defined in xmacro:
-//#define TwoWire_write Wire_write1
-//XPrintMethods(TwoWire,Wire)
-XPrintMethods(Wire,Wire)
+/* --- sintaxis estilo Arduino en el sketch: Wire.begin()... ---
+ * sdcc.sh convierte "Wire.metodo(" en "Wire__metodo(" y estas macros
+ * llaman directamente a las funciones en C (ver sduino_obj.h). */
+#include <sduino_obj.h>
+#ifdef SDUINO_SKETCH
+#define Wire__begin(...)              S8_OVERLOAD(Wire__begin, __VA_ARGS__)
+#define Wire__begin0()                Wire_begin()
+#define Wire__begin1(address)         Wire_beginSlave(address)
+#define Wire__end()                   Wire_end()
+#define Wire__setClock(hz)            Wire_setClock(hz)
+#define Wire__setTimeout(ms)          Wire_setTimeout(ms)
+/* setWireTimeout(us, reset) de Arduino: aqui siempre se reinicia el bus */
+#define Wire__setWireTimeout(...)     S8_OVERLOAD(Wire__setWireTimeout, __VA_ARGS__)
+#define Wire__setWireTimeout0()       Wire_setTimeout(25)
+#define Wire__setWireTimeout1(us)     Wire_setTimeout((uint16_t)(((us) + 999UL) / 1000UL))
+#define Wire__setWireTimeout2(us, r)  Wire_setTimeout((uint16_t)(((us) + 999UL) / 1000UL))
+#define Wire__getWireTimeoutFlag()    (Wire_lastError() == TWI_ERR_TIMEOUT)
+#define Wire__clearWireTimeoutFlag()  ((void) 0)
+#define Wire__lastError()             Wire_lastError()
+#define Wire__beginTransmission(a)    Wire_beginTransmission(a)
+#define Wire__endTransmission(...)    S8_OVERLOAD(Wire__endTransmission, __VA_ARGS__)
+#define Wire__endTransmission0()      Wire_endTransmission1(1)
+#define Wire__endTransmission1(stop)  Wire_endTransmission1(stop)
+#define Wire__requestFrom(...)        S8_OVERLOAD(Wire__requestFrom, __VA_ARGS__)
+#define Wire__requestFrom2(a, n)      Wire_requestFrom2(a, n)
+#define Wire__requestFrom3(a, n, s)   Wire_requestFrom3(a, n, s)
+#define Wire__requestFrom5(a, n, ia, is, s) Wire_requestFrom5(a, n, ia, is, s)
+#define Wire__write(...)              S8_OVERLOAD(Wire__write, __VA_ARGS__)
+#define Wire__write1(x)               _Generic((x), char: Wire_write, signed char: Wire_write, \
+                                               unsigned char: Wire_write, _Bool: Wire_write, \
+                                               int: Wire_write, unsigned int: Wire_write, \
+                                               long: Wire_write, unsigned long: Wire_write, \
+                                               default: Wire_write_s)(x)
+#define Wire__write2(buf, n)          Wire_write_sn((const uint8_t *)(buf), n)
+#define Wire__available()             Wire_available()
+#define Wire__read()                  Wire_read()
+#define Wire__peek()                  Wire_peek()
+#define Wire__flush()                 Wire_flush()
+#define Wire__onReceive(f)            Wire_onReceive(f)
+#define Wire__onRequest(f)            Wire_onRequest(f)
+#define Wire__print(...)              S8_PRINT(Wire_write, __VA_ARGS__)
+#define Wire__println(...)            S8_PRINTLN(Wire_write, __VA_ARGS__)
+#endif
 
 #endif

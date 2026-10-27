@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.6.0 - 2026-10-27] (CEPH81)
+### Añadido
+- Soporte del Arduino IDE 2.x (arduino-cli): recetas nuevas, prototipos de funciones,
+  carga con ST-Link sin puerto, "Grabar bootloader" (desbloqueo) y programadores.
+- Placa STM8S005K6T6 con el pinout de la STM8 Black.
+- Sintaxis estilo Arduino sin coste en el sketch: Serial.x(), Wire.x(), EEPROM.x(), SPI.x().
+- Controlador I2C nuevo en el core (twi.c): tiempos de espera, tope sin millis(),
+  recuperacion del bus, 10-400 kHz para el F_CPU real, modo esclavo por interrupcion.
+- Pruebas del controlador I2C contra un modelo del periferico (test/twi_host).
+- Funciones de caracteres de Arduino (isDigit(), toUpperCase()...).
+- Paquete para el gestor de placas (board-manager/paquete_ide2.py) e instalador para Windows.
+
+### Cambiado
+- Wire e I2C usan el controlador nuevo (sin la SPL) y se enlazan por modulos.
+- Buffers de Serial de 64 bytes en micros con 2 KB de RAM; indices de 8 bits.
+- Herramientas (stm8flash, stm8gal, scripts) dentro de la plataforma.
+- Librerias marcadas para la arquitectura stm8.
+- EEPROM.length() = 128 en STM8S005/003/001 (lo que garantiza la hoja de datos).
+
+### Corregido
+- Ejemplos de LiquidCrystal y LiquidCrystal_pcf2119 que usaban pines inexistentes.
+- Funciones de compatibilidad que faltaban en LiquidCrystal_I2C y pcf2119.
+- Codigo de mas (float, metodos sin usar) al generar el IDE prototipos de funciones.
+- Ejemplo HMC5883L con la API actual.
+
+
 ## [0.5 - 2019-05-10]
 ### Changed
 - reduced binary size by splitting some Arduino core files

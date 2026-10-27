@@ -32,3 +32,8 @@ site/
 # ignore my scratch directory
 notes/
 .DS_Store
+
+# SDCC instalado a mano (ver README): no se sube al repositorio
+sduino/tools/sdcc/
+board-manager/dist/
+test/twi_host/test_twi

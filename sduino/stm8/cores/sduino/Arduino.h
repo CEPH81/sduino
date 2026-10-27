@@ -25,6 +25,25 @@
 #include <string.h>
 #include <math.h>
 #include <stdint.h>
+#include <ctype.h>
+
+/* Funciones de caracteres de Arduino (WCharacter.h) */
+#define isAlphaNumeric(c)     isalnum(c)
+#define isAlpha(c)            isalpha(c)
+#define isAscii(c)            ((unsigned char)(c) < 128)
+#define isWhitespace(c)       ((c) == ' ' || (c) == '\t')
+#define isControl(c)          iscntrl(c)
+#define isDigit(c)            isdigit(c)
+#define isGraph(c)            isgraph(c)
+#define isLowerCase(c)        islower(c)
+#define isPrintable(c)        isprint(c)
+#define isPunct(c)            ispunct(c)
+#define isSpace(c)            isspace(c)
+#define isUpperCase(c)        isupper(c)
+#define isHexadecimalDigit(c) isxdigit(c)
+#define toAscii(c)            ((c) & 0x7f)
+#define toLowerCase(c)        tolower(c)
+#define toUpperCase(c)        toupper(c)
 
 //#include <avr/pgmspace.h>
 //#include <avr/io.h>
@@ -276,6 +295,7 @@ enum {
 //FIXME#include "WCharacter.h"
 //FIXME#include "WString.h"
 #include "HardwareSerial.h"
+#include "sduino_obj.h"
 
 //uint16_t makeWord(uint16_t w);
 //uint16_t makeWord(byte h, byte l);

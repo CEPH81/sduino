@@ -37,7 +37,7 @@ unsigned char initialized;//=0 internal status. Returned on HardwareSerial()
 static void store_char(unsigned char c, ring_buffer *buffer)
 //inline void store_char(unsigned char c, ring_buffer *buffer)
 {
-  int i = (unsigned int)(buffer->head + 1) % SERIAL_BUFFER_SIZE;
+  uint8_t i = SERIAL_NEXT(buffer->head);
 
   // if we should be storing the received character into the location
   // just before the tail (meaning that the head would advance to the
@@ -82,7 +82,7 @@ void UARTx_TX_IRQHandler(void) __interrupt(ITC_IRQ_UARTx_TX) /* UART1/2 TX */
   else {
     // There is more data in the output buffer. Send the next byte
     unsigned char c = tx_buffer.buffer[tx_buffer.tail];
-    tx_buffer.tail = (tx_buffer.tail + 1) % SERIAL_BUFFER_SIZE;
+    tx_buffer.tail = SERIAL_NEXT(tx_buffer.tail);
 	
     UARTx_SendData8(c);
   }
@@ -95,7 +95,7 @@ void UARTx_TX_IRQHandler(void) __interrupt(ITC_IRQ_UARTx_TX) /* UART1/2 TX */
   else {
     // There is more data in the output buffer. Send the next byte
     unsigned char c = tx_buffer.buffer[tx_buffer.tail];
-    tx_buffer.tail = (tx_buffer.tail + 1) % SERIAL_BUFFER_SIZE;
+    tx_buffer.tail = SERIAL_NEXT(tx_buffer.tail);
 
     UARTx->DR = c;
   }

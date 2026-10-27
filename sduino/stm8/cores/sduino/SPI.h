@@ -296,4 +296,24 @@ private:
 };
 */
 
+/* --- sintaxis estilo Arduino en el sketch: SPI.begin(), SPI.transfer(x)...
+ * (sdcc.sh convierte "SPI.metodo(" en "SPI__metodo("; ver sduino_obj.h) */
+#ifdef SDUINO_SKETCH
+#include <sduino_obj.h>
+#define SPI__begin()                 SPI_begin()
+#define SPI__end()                   SPI_end()
+#define SPI__beginTransaction(s)     SPI_beginTransaction(s)
+#define SPI__endTransaction()        SPI_endTransaction()
+#define SPI__transfer(...)           S8_OVERLOAD(SPI__transfer, __VA_ARGS__)
+#define SPI__transfer1(b)            SPI_transfer(b)
+#define SPI__transfer2(buf, n)       SPI_transfer_n(buf, n)
+#define SPI__setBitOrder(o)          SPI_setBitOrder(o)
+#define SPI__setDataMode(m)          SPI_setDataMode(m)
+#define SPI__setClockDivider(d)      SPI_setClockDivider(d)
+#define SPI__usingInterrupt(n)       SPI_usingInterrupt(n)
+#define SPI__notUsingInterrupt(n)    SPI_notUsingInterrupt(n)
+#define SPI__attachInterrupt()       SPI_attachInterrupt()
+#define SPI__detachInterrupt()       SPI_detachInterrupt()
+#endif
+
 #endif

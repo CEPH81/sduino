@@ -45,7 +45,14 @@
 #include <LiquidCrystal.h>
 
 // initialize the library with the numbers of the interface pins
+// Pines RS, E, D4, D5, D6, D7 (el STM8S103 tiene PA3; los de 32 patas no)
+#if defined(ARDUINO_STM8S_BLUE)
 LiquidCrystal (lcd,PA1,PA2, PA3,PD2,PD3,PD4);
+#elif defined(ARDUINO_STM8S_UNO) || defined(ARDUINO_STM8S_MB)
+LiquidCrystal (lcd,12,11, 5,4,3,2);       // como en Arduino UNO
+#else
+LiquidCrystal (lcd,PA1,PA2, PD7,PD2,PD3,PD4);
+#endif
 
 void setup() {
   // set up the LCD's number of columns and rows:

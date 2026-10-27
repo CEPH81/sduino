@@ -3,7 +3,7 @@
  */
 size_t HardwareSerial_write(uint8_t c)
 {
-  int i = (tx_buffer.head + 1) % SERIAL_BUFFER_SIZE;
+  uint8_t i = SERIAL_NEXT(tx_buffer.head);
 	
   // If the output buffer is full, there's nothing for it other than to 
   // wait for the interrupt handler to empty it a bit

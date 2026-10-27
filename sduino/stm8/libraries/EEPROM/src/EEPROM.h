@@ -34,7 +34,15 @@
 /* --- Arduino-like interface -------------------------------------------- */
 
 // compatibility definitions
+/* Tamano de la EEPROM de datos. Los micros "value line" (STM8S005, STM8S003,
+ * STM8S001) usan el mismo silicio que el 105/103 pero su hoja de datos solo
+ * garantiza 128 bytes: se limita a eso para no usar memoria fuera de
+ * especificacion. */
+#if defined(STM8S005) || defined(STM8S003) || defined(STM8S001)
+#define E2END		127
+#else
 #define E2END		(FLASH_DATA_BLOCKS_NUMBER * FLASH_BLOCK_SIZE - 1)
+#endif
 #define EERef(N)	(*((uint8_t*)((uint16_t)FLASH_DATA_START_PHYSICAL_ADDRESS)+(N)))
 
 typedef uint16_t EEPtr;
@@ -69,5 +77,18 @@ inline uint8_t eeprom_is_ready(void) {return (FLASH->IAPSR & FLASH_IAPSR_EOP);}
 void eeprom_write_block(uint16_t idx, const uint8_t *ptr, size_t len);
 void eeprom_update_block(uint16_t idx, uint8_t *ptr, size_t len);
 void eeprom_read_block(const uint16_t idx, uint8_t *ptr, size_t len);
+
+/* --- sintaxis estilo Arduino en el sketch: EEPROM.read(0), EEPROM.put(0, x)...
+ * (sdcc.sh convierte "EEPROM.metodo(" en "EEPROM__metodo("; ver sduino_obj.h) */
+#ifdef SDUINO_SKETCH
+#define EEPROM__read(i)         EEPROM_read(i)
+#define EEPROM__write(i, v)     EEPROM_write(i, v)
+#define EEPROM__update(i, v)    EEPROM_update(i, v)
+#define EEPROM__get(i, var)     EEPROM_get(i, var)
+#define EEPROM__put(i, var)     EEPROM_put(i, var)
+#define EEPROM__length()        EEPROM_length()
+#define EEPROM__begin()         EEPROM_begin()
+#define EEPROM__end()           EEPROM_end()
+#endif
 
 #endif /* EEPROM_h */

@@ -9,7 +9,7 @@ int HardwareSerial_read(void)
     return -1;
   } else {
     unsigned char c = rx_buffer.buffer[rx_buffer.tail];
-    rx_buffer.tail = (unsigned int)(rx_buffer.tail + 1) % SERIAL_BUFFER_SIZE;
+    rx_buffer.tail = SERIAL_NEXT(rx_buffer.tail);
     runSerialEvent = (rx_buffer.head != rx_buffer.tail);
     return c;
   }
