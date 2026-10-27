@@ -42,7 +42,7 @@ También siguen: STM8S103F3 (placa azul), STM8S105C6 Discovery, sduino UNO (STM8
 
 ## Instalación
 
-### A) Gestor de placas (cuando esté publicada la release)
+### A) Gestor de placas (recomendado)
 
 1. **Archivo → Preferencias → URLs adicionales del gestor de placas**:
    ```

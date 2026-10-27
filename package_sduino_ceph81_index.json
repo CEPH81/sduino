@@ -14,7 +14,7 @@
           "architecture": "stm8",
           "version": "0.6.0",
           "category": "Contributed",
-          "url": "https://github.com/CEPH81/sduino/releases/download/v0.6.0/sduino-stm8-0.6.0.tar.bz2",
+          "url": "https://raw.githubusercontent.com/CEPH81/sduino/paquetes/sduino-stm8-0.6.0.tar.bz2",
           "archiveFileName": "sduino-stm8-0.6.0.tar.bz2",
           "checksum": "SHA-256:5b6ab692e52a066262959def4b9cbe84b9cd834374cefacc3fbb8af678af50eb",
           "size": "2740869",

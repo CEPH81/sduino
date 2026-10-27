@@ -11,7 +11,7 @@ usuario), asi que la suma SHA-256 solo cambia si cambia el contenido.
 
 Publicacion:
   1. Ejecute:  python3 board-manager/paquete_ide2.py
-  2. En GitHub cree la release "v<version>" de CEPH81/sduino y suba el .tar.bz2.
+  2. Suba el .tar.bz2 a la rama "paquetes" del repositorio (git add + push).
   3. Copie el .json a la raiz del repositorio (rama development) y haga push.
   4. En el IDE: Archivo > Preferencias > URLs adicionales del gestor de placas:
        https://raw.githubusercontent.com/CEPH81/sduino/development/package_sduino_ceph81_index.json
@@ -102,7 +102,7 @@ def main():
             "architecture": "stm8",
             "version": version,
             "category": "Contributed",
-            "url": "https://github.com/%s/releases/download/v%s/%s" % (REPO, version, nombre),
+            "url": "https://raw.githubusercontent.com/%s/paquetes/%s" % (REPO, nombre),
             "archiveFileName": nombre,
             "checksum": "SHA-256:" + sha,
             "size": str(tam),
