@@ -9,11 +9,28 @@ void init()
 	CFG->GCR = CFG_GCR_SWD;
 #endif
 
-	// set the clock to 16 MHz
-#ifdef USE_SPL
-	CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1);
+	// Reloj del sistema (menu "Reloj" de la placa):
+	// - por defecto, oscilador interno HSI a 16 MHz;
+	// - SDUINO_CLOCK_HSE: cristal externo de F_CPU (8 o 16 MHz). Si el cristal
+	//   no arranca, se sigue con el HSI dividido para dar la misma frecuencia,
+	//   asi millis(), delay() y la velocidad del puerto serie siguen bien.
+#if F_CPU == 8000000UL
+	CLK->CKDIVR = 0x08;		// HSI/2 = 8 MHz, CPU sin dividir
 #else
-	CLK->CKDIVR = 0;
+	CLK->CKDIVR = 0;		// HSI/1 = 16 MHz
+#endif
+#ifdef SDUINO_CLOCK_HSE
+	{
+		uint16_t t = 0xFFFF;		// ~25 ms: el cristal tarda unos pocos ms
+		CLK->SWCR |= CLK_SWCR_SWEN;	// cambio automatico de fuente
+		CLK->SWR = 0xB4;		// 0xB4 = HSE
+		while ((CLK->SWCR & CLK_SWCR_SWBSY) && --t)
+			;
+		if (CLK->CMSR != 0xB4) {	// no hay cristal: abortar y seguir con HSI
+			CLK->SWCR &= (uint8_t)~(CLK_SWCR_SWBSY | CLK_SWCR_SWEN);
+			CLK->ECKR &= (uint8_t)~CLK_ECKR_HSEEN;
+		}
+	}
 #endif
 	
 	GPIO_DeInit(GPIOA);

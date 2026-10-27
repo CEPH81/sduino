@@ -9,6 +9,7 @@ Placas principales de esta versión:
 |---|---|---|---|---|
 | **STM8S105K4T6 Breakout Board (STM8 Black)** | STM8S105K4T6 | 16 KB | 2 KB | 1 KB |
 | **STM8S005K6T6 (pinout STM8 Black)** — nueva | STM8S005K6T6 | 32 KB | 2 KB | 128 B |
+| **STM8S003F3P6 (pinout STM8S103F3)** — nueva | STM8S003F3P6 | 8 KB | 1 KB | 128 B |
 
 También siguen: STM8S103F3 (placa azul), STM8S105C6 Discovery, sduino UNO (STM8S105K6) y sduino MB (STM8S208MB).
 
@@ -78,11 +79,15 @@ controlador *WinUSB*, *Replace Driver*). En Linux, añada una regla udev para el
 
 1. **Herramientas → Placa → STM8S (sduino)** → *STM8S105K4T6 Breakout Board (STM8 Black)*
    o *STM8S005K6T6 (pinout STM8 Black)*.
-2. **Método de carga**: *ST-Link/V2 (stm8flash)* (por defecto, sin puerto) o
+2. **Reloj**: *Interno 16 MHz (HSI)* (por defecto), *Cristal externo 16 MHz (HSE)* o
+   *Cristal externo 8 MHz (HSE)*. Si el cristal no arranca, el micro sigue con el oscilador
+   interno ajustado a la misma frecuencia, así que `millis()`, `delay()` y el puerto serie
+   siguen funcionando bien.
+3. **Método de carga**: *ST-Link/V2 (stm8flash)* (por defecto, sin puerto) o
    *Serie (stm8gal, bootloader ROM)*.
-3. **Optimización**: *Tamaño de código* (por defecto), *Tamaño mínimo* (compila más
+4. **Optimización**: *Tamaño de código* (por defecto), *Tamaño mínimo* (compila más
    lento) o *Velocidad*.
-4. Pulse **Subir**.
+5. Pulse **Subir**.
 
 Conexión del ST-Link V2: **SWIM ↔ PD1**, **NRST ↔ NRST**, **GND ↔ GND**, **3,3 V ↔ 3V3**.
 
@@ -155,7 +160,7 @@ stm8-gdb) o la extensión [STM8 Debug para VS Code](https://github.com/github0nu
 - `test/twi_host`: el controlador I²C se prueba en el PC contra un modelo del periférico
   I²C del STM8S (lecturas de 1/2/N bytes, NACK, bus bloqueado, 3000 operaciones al azar):
   `make -C test/twi_host`.
-- Todos los ejemplos (71) compilan para la STM8 Black y la STM8S005K6.
+- Todos los ejemplos (71) compilan para la STM8 Black, la STM8S005K6 y la STM8S003F3.
 
 ## Créditos y licencia
 

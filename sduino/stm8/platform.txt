@@ -58,7 +58,9 @@ compiler.c.elf.extra_flags=
 compiler.ar.extra_flags=
 build.extra_flags=
 
-build.defines=-mstm8 -D{build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_STM8
+# fuente del reloj (menu Reloj): vacio = oscilador interno
+build.clock_flags=
+build.defines=-mstm8 -D{build.mcu} -DF_CPU={build.f_cpu} {build.clock_flags} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_STM8
 
 # Recetas de compilacion
 # ----------------------

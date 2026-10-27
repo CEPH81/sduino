@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Soporte del Arduino IDE 2.x (arduino-cli): recetas nuevas, prototipos de funciones,
   carga con ST-Link sin puerto, "Grabar bootloader" (desbloqueo) y programadores.
 - Placa STM8S005K6T6 con el pinout de la STM8 Black.
+- Placa STM8S003F3P6 con el pinout de la STM8S103F3.
+- Menu Reloj: interno 16 MHz o cristal externo de 8/16 MHz (vuelve al interno si el cristal no arranca).
 - Sintaxis estilo Arduino sin coste en el sketch: Serial.x(), Wire.x(), EEPROM.x(), SPI.x().
 - Controlador I2C nuevo en el core (twi.c): tiempos de espera, tope sin millis(),
   recuperacion del bus, 10-400 kHz para el F_CPU real, modo esclavo por interrupcion.

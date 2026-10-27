@@ -16,14 +16,17 @@
           "category": "Contributed",
           "url": "https://github.com/CEPH81/sduino/releases/download/v0.6.0/sduino-stm8-0.6.0.tar.bz2",
           "archiveFileName": "sduino-stm8-0.6.0.tar.bz2",
-          "checksum": "SHA-256:5a08685a4ebd8e00127611845ac0265d060ac8ec686c5937207d6a9bfec66e06",
-          "size": "2742751",
+          "checksum": "SHA-256:5b6ab692e52a066262959def4b9cbe84b9cd834374cefacc3fbb8af678af50eb",
+          "size": "2740869",
           "help": {
             "online": "https://github.com/CEPH81/sduino"
           },
           "boards": [
             {
               "name": "STM8S103F3 Breakout Board"
+            },
+            {
+              "name": "STM8S003F3P6 (pinout STM8S103F3)"
             },
             {
               "name": "STM8S105C6 Discovery Board"
