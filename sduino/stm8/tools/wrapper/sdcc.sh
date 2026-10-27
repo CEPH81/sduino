@@ -26,8 +26,12 @@ shift 4
 REL=${OBJ%.o}.rel
 
 case "$SRC" in
-	*.cpp)
-		CSRC="${SRC%pp}"
+	*.cpp|*.merged)
+		# el sketch: X.ino.cpp, o X.ino.cpp.merged (preprocesado en IDE 2.3+)
+		case "$SRC" in
+			*.cpp) CSRC="${SRC%pp}" ;;
+			*)     CSRC="${SRC}.c" ;;
+		esac
 		{
 			echo "#define SDUINO_SKETCH 1"
 			# referencia a main() para que se enlace main.c del core

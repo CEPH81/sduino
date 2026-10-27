@@ -6,7 +6,7 @@
 # Especificacion: https://arduino.github.io/arduino-cli/latest/platform-specification/
 
 name=STM8S (sduino)
-version=0.6.0
+version=0.6.1
 
 # Herramientas
 # ------------

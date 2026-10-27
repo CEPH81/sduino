@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.6.1 - 2026-10-27]
+### Corregido
+- Arduino IDE 2.3+ (arduino-cli 1.2 o posterior): el preprocesado pasa el sketch como
+  "X.ino.cpp.merged" y SDCC daba "error 119: file extension unsupported".
+
+
 ## [0.6.0 - 2026-10-27] (CEPH81)
 ### Añadido
 - Soporte del Arduino IDE 2.x (arduino-cli): recetas nuevas, prototipos de funciones,
